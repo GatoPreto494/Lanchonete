@@ -365,6 +365,7 @@ function cancelRequest() {
 
 function resetOrder() {
     carrinho = {};
+    // Resetar quantidades dos itens do menu
     Object.keys(itemsData).forEach(category => {
         if (Array.isArray(itemsData[category])) {
             itemsData[category].forEach(item => {
@@ -373,7 +374,7 @@ function resetOrder() {
             });
         }
     });
-    // Resetar adicionais
+    // Resetar quantidades dos adicionais
     itemsData.adicionais.forEach(item => {
         const input = document.getElementById(`${formatId(item.name)}-additional-quantity`);
         if (input) input.value = 0;
@@ -399,20 +400,20 @@ function resetOrder() {
 // Funções de localização (mantidas, mas considere o aviso sobre API Key)
 function aceitarLocalizacao() {
     localStorage.setItem("localizacaoPermitida", "true");
-    togglePopup('popup-permissao-localizacao', false);
-    obterLocalizacao();
+    togglePopup('popup-permissao-localizacao', false); // Fecha o popup
+    obterLocalizacao(); // Tenta obter a localização
 }
 
 function inserirEnderecoManual() {
     localStorage.setItem("localizacaoPermitida", "false"); // Marca como não permitido para não pedir de novo
-    togglePopup('popup-permissao-localizacao', false);
-    askAddress(); // Abre o pop-up de endereço direto
+    togglePopup('popup-permissao-localizacao', false); // Fecha o popup
+    // Não chama askAddress() aqui, pois o objetivo é iniciar no menu
 }
 
 function obterLocalizacao() {
     if (!navigator.geolocation) {
         alert("Seu navegador não suporta geolocalização. Por favor, insira o endereço manualmente.");
-        inserirEnderecoManual();
+        localStorage.setItem("localizacaoPermitida", "false"); // Marca como não suportado
         return;
     }
 
@@ -430,12 +431,11 @@ function erroLocalizacao(error) {
     console.error("Erro ao obter localização:", error);
     if (error.code === error.PERMISSION_DENIED) {
         alert("⚠️ A permissão de localização foi negada. Por favor, permita a localização ou insira seu endereço manualmente.");
-        localStorage.removeItem("localizacaoPermitida"); // Remove para pedir novamente na próxima
-        inserirEnderecoManual();
+        localStorage.setItem("localizacaoPermitida", "false"); // Marca como negada
     } else {
         alert("Erro ao obter localização. A taxa de entrega pode ser padrão ou inválida. Por favor, insira seu endereço manualmente.");
-        inserirEnderecoManual();
     }
+    // Não força a abertura do popup de endereço aqui, deixa o usuário navegar pelo menu.
 }
 
 // Loja localizada em Jacareí, São Paulo.
@@ -447,7 +447,6 @@ const LOJA_LONGITUDE = -45.9658;
 function calcularDistancia(userLat, userLng) {
     if (typeof google === 'undefined' || !google.maps) {
         console.error("Google Maps API não carregado. Verifique sua chave ou conexão.");
-        // Define uma taxa padrão se a API não estiver disponível
         sessionStorage.setItem("taxaEntrega", 10.00); // Taxa de fallback
         return;
     }
@@ -529,9 +528,9 @@ function atualizarContadorCarrinho() {
     toggleConfirmOrderButton();
 }
 
-// Ativa/desativa o botão "Confirmar Pedido"
+// Ativa/desativa o botão "Confirmar Pedido" principal
 function toggleConfirmOrderButton() {
-    const confirmarBtn = document.getElementById("confirmar-pedido");
+    const confirmarBtn = document.getElementById("confirmar-pedido-main");
     const totalItens = parseInt(document.getElementById("carrinho-contador").innerText);
     confirmarBtn.disabled = totalItens === 0;
 }
@@ -648,34 +647,34 @@ function sendToWhatsApp() {
 
 // Evento DOMContentLoaded para inicializar
 document.addEventListener("DOMContentLoaded", function () {
-    // Esconde o pop-up de permissão de localização por padrão
-    document.getElementById("popup-permissao-localizacao").style.display = "none";
-
-    // Verifica se a localização já foi permitida antes
-    if (localStorage.getItem("localizacaoPermitida") === "true") {
-        console.log("✅ Localização já permitida.");
-        obterLocalizacao();
-    } else if (localStorage.getItem("localizacaoPermitida") === "false") {
-        console.log("❌ Localização negada anteriormente. Ir para endereço manual.");
-        // Não mostra o pop-up, vai direto para o endereço manual se já negou
-    } else {
-        console.log("❓ Pedindo permissão de localização pela primeira vez.");
-        togglePopup('popup-permissao-localizacao', true); // Mostra o pop-up de permissão
-    }
-
-    // Gera os itens dos menus e adicionais
+    // 1. Gera os itens dos menus e adicionais
     generateMenuItems('lanches');
     generateMenuItems('porcoes');
     generateMenuItems('bebidas');
     generateAdditionalItems(); // Gera os itens para o pop-up de adicionais
 
-    // Exibe a primeira categoria por padrão
+    // 2. Exibe a primeira categoria por padrão
     showMenu('lanches');
 
-    // Inicializa o contador do carrinho
+    // 3. Inicializa o contador do carrinho e o estado do botão de confirmar pedido
     atualizarContadorCarrinho();
 
-    // Listener para o campo de pagamento
+    // 4. Verifica e gerencia o pop-up de permissão de localização
+    // Mantenha o popup-permissao-localizacao com display: none no CSS para começar oculto.
+    const localizacaoPermitida = localStorage.getItem("localizacaoPermitida");
+
+    if (localizacaoPermitida === "true") {
+        console.log("✅ Localização já permitida.");
+        obterLocalizacao(); // Tenta obter a localização para calcular a taxa
+    } else if (localizacaoPermitida === "false") {
+        console.log("❌ Localização negada/não suportada anteriormente.");
+        // Não mostra o popup, o usuário pode ir para o formulário de endereço manual se quiser.
+    } else {
+        console.log("❓ Pedindo permissão de localização pela primeira vez.");
+        togglePopup('popup-permissao-localizacao', true); // Mostra o pop-up de permissão
+    }
+
+    // 5. Listener para o campo de pagamento
     document.getElementById("forma-pagamento").addEventListener("change", function () {
         document.getElementById("erro-pagamento").style.display = "none";
     });
