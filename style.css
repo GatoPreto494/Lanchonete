@@ -1,0 +1,399 @@
+/* Estilos Gerais */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f3f3f3;
+    color: #0c0909;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.titulo-container {
+    background-color: #ffffff;
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+    margin: 0;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.titulo-container h1 {
+    margin: 0;
+    padding: 0;
+    color: #181616;
+}
+
+/* Botão Carrinho */
+#carrinho-btn {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    font-size: 1.5em;
+    vertical-align: middle;
+    margin-left: 15px;
+}
+
+#carrinho-contador {
+    background: red;
+    color: white;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 4px 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    right: -10px;
+}
+
+/* Abas de Categoria */
+.tab-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 0;
+    padding: 10px;
+    background-color: #f3f3f3; /* Para garantir que não fique transparente com a rolagem */
+    position: sticky; /* Mantém as abas fixas no topo ao rolar */
+    top: 0;
+    z-index: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tab-buttons button {
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #181616;
+    margin: 0 5px;
+}
+
+.tab-buttons button:hover {
+    background-color: rgba(230, 230, 230, 0.9);
+}
+
+.tab-buttons button.active {
+    background-color: orange; /* Cor de destaque para a aba ativa */
+    color: white;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    transform: translateY(2px);
+}
+
+.tab-buttons button:active {
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    transform: translateY(3px);
+}
+
+/* Menu de Itens */
+.menu {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #ece9e9;
+    padding: 20px;
+    border-radius: 10px;
+    max-height: calc(100vh - 200px); /* Ajuste a altura máxima para rolagem */
+    overflow-y: auto;
+    scrollbar-width: none; /* Esconde a barra no Firefox */
+    -ms-overflow-style: none; /* Esconde a barra no IE e Edge */
+}
+
+.menu::-webkit-scrollbar {
+    display: none; /* Esconde a barra no Chrome, Safari e Edge */
+}
+
+.menu-items {
+    display: none;
+}
+
+.menu-items.active {
+    display: block;
+}
+
+.item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.item:hover {
+    transform: translateY(-3px);
+    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.text-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1; /* Permite que o conteúdo de texto ocupe o espaço restante */
+    margin-left: 15px; /* Espaçamento entre controles e texto */
+    text-align: left;
+}
+
+.text-content span {
+    font-weight: bold;
+    color: #181616;
+    font-size: 1.1em;
+}
+
+.description {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Controles de Quantidade */
+.controls {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* Impede que os controles encolham */
+}
+
+.btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.btn-increase {
+    background-color: #4CAF50; /* Verde */
+}
+
+.btn-increase:hover {
+    background-color: #45a049;
+}
+
+.btn-decrease {
+    background-color: #FF6347; /* Vermelho */
+}
+
+.btn-decrease:hover {
+    background-color: #E04D3C;
+}
+
+.btn:active {
+    transform: scale(0.9);
+}
+
+input[type="number"] {
+    width: 40px;
+    text-align: center;
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    margin: 0 10px;
+    -moz-appearance: textfield; /* Remove setas em Firefox */
+}
+
+/* Remover setas em Chrome, Safari, Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Pop-ups */
+.popup-overlay {
+    display: none;
+    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    display: flex; /* Mantém flexbox para centralizar */
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.popup-content {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+    max-height: 90vh; /* Para pop-ups com conteúdo rolável */
+    overflow-y: auto;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.4);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE e Edge */
+}
+
+.popup-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari e Edge */
+}
+
+.popup-content h3 {
+    color: #181616;
+    font-size: 1.4em;
+    margin-bottom: 20px;
+}
+
+.popup-content h4 {
+    color: #181616;
+    font-size: 1.2em;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.popup-content input,
+.popup-content select,
+.popup-content textarea {
+    width: calc(100% - 20px); /* Ajusta para padding */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.popup-content textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+    min-height: 80px;
+}
+
+/* Botões nos Pop-ups */
+.btn-principal,
+.confirmar-pedido-btn {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    margin-top: 15px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: 0.3s ease;
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn-principal:hover,
+.confirmar-pedido-btn:hover {
+    background-color: darkorange;
+}
+
+.btn-fechar {
+    background-color: gray;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    margin-top: 10px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: 0.3s ease;
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn-fechar:hover {
+    background-color: #444;
+}
+
+.confirmar-pedido-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Resumo do Pedido */
+#order-summary {
+    background: #fdfdfd;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #181616;
+    white-space: pre-line;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    margin: 20px auto;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+#order-summary div {
+    margin-bottom: 5px;
+}
+
+.total-destaque {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: orange;
+    text-align: center;
+    display: block;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+}
+
+#taxa-entrega {
+    font-weight: bold;
+    color: #d32f2f; /* Vermelho para taxa de entrega */
+    margin-top: 10px;
+}
+
+#observacao-pedido {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+#troco-pedido {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #4CAF50; /* Verde para troco */
+}
+
+/* Fundo Escuro */
+#fundo-escuro {
+    display: none;
+    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 998;
+}
+
+.body-bloqueado {
+    overflow: hidden;
+}
+
+/* Mensagens de erro */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    display: none;
+}

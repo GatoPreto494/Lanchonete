@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Peça os melhores lanches, porções e bebidas do Gato Preto diretamente do nosso delivery!">
+    <meta name="author" content="Gato Preto">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:title" content="Gato Preto - Lanches Delivery" />
+    <meta property="og:description" content="Os melhores lanches e porções com entrega rápida. Peça agora!" />
+    <meta property="og:image" content="https://i.postimg.cc/prrvJYKj/gatopreto-jpg.jpg" /> <meta property="og:url" content="https://www.seusite.com" /> <meta property="og:type" content="website" />
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPworuKpZ4tVm8jM_wPfCMrEZ-p0n-Y_U&libraries=places&callback=initMap" async defer></script>
+
+    <link rel="stylesheet" href="style.css">
+
+    <title>Gato Preto - Lanches Delivery</title>
+</head>
+<body>
+    <div class="titulo-container">
+        <h1>
+            Bem-vindo ao Gato Preto - Lanches Delivery!
+            <span id="carrinho-btn" onclick="toggleCarrinho()">🛒<span id="carrinho-contador">0</span></span>
+        </h1>
+    </div>
+
+    <div id="carrinho-popup" class="popup-overlay">
+        <div class="popup-content">
+            <h2>🛍️ Seu Carrinho</h2>
+            <div id="carrinho-itens"></div>
+            <button onclick="askAddress()" class="btn-confirmar">Confirmar Pedido</button>
+            <button onclick="fecharCarrinho()" class="btn-fechar">Fechar</button>
+        </div>
+    </div>
+
+    <div class="tab-buttons">
+        <button onclick="showMenu('lanches')">Lanches 🍔</button>
+        <button onclick="showMenu('porcoes')">Porções 🍟</button>
+        <button onclick="showMenu('bebidas')">Bebidas 🥤</button>
+    </div>
+
+    <div class="menu">
+        <div class="menu-items" id="lanches"></div>
+        <div class="menu-items" id="porcoes"></div>
+        <div class="menu-items" id="bebidas"></div>
+    </div>
+
+    <button class="btn-confirmar confirmar-pedido-btn" id="confirmar-pedido" onclick="askAddress()" disabled>Confirmar Pedido</button>
+
+    <div id="popup-endereco" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Digite seu endereço para entrega</h3>
+            <input type="text" id="nome" placeholder="Nome Completo" required>
+            <input type="text" id="endereco" placeholder="Endereço de entrega (Rua, Av.)" required>
+            <input type="text" id="bairro" placeholder="Bairro" required>
+            <input type="text" id="numero" placeholder="Número" required>
+            <input type="text" id="complemento" placeholder="Complemento (apto, bloco, ponto de referência)" maxlength="100">
+
+            <h4>Forma de Pagamento</h4>
+            <select id="forma-pagamento" required>
+                <option value="" selected disabled>Selecionar pagamento</option>
+                <option value="pix">Pix</option>
+                <option value="maquina">Máquina</option>
+                <option value="dinheiro">Dinheiro</option>
+            </select>
+            <p id="erro-pagamento" class="error-message">⚠️ Selecione uma forma de pagamento antes de continuar!</p>
+
+            <label for="observacao">Alguma observação sobre seu pedido?</label>
+            <textarea id="observacao" name="observacao" placeholder="Ex: Sem alface, sem maionese, entregar na portaria..." maxlength="150"></textarea>
+
+            <button onclick="checkPaymentMethod()" class="btn-principal">Continuar</button>
+            <button onclick="closeAddressPopup()" class="btn-fechar">Fechar</button>
+        </div>
+    </div>
+
+    <div id="popup-troco" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Você precisará de troco?</h3>
+            <button onclick="showTrocoInput(true)" class="btn-principal">Sim</button>
+            <button onclick="showTrocoInput(false)" class="btn-fechar">Não</button>
+
+            <div id="troco-input-div" style="display: none;">
+                <label for="valor-troco">Para qual valor precisará?</label>
+                <input type="number" id="valor-troco" placeholder="Ex: 50.00" min="0.01" step="0.01">
+                <button onclick="confirmTroco()" class="btn-principal">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-adicionais" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Escolha seus adicionais</h3>
+            <div id="adicionais-list"></div>
+
+            <button onclick="confirmarAdicionais()" class="btn-principal">Confirmar Adicionais</button>
+            <button onclick="pularAdicionais()" class="btn-fechar">Pular</button>
+        </div>
+    </div>
+
+    <div id="popup-confirmation" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Você deseja confirmar seu pedido?</h3>
+            <div id="order-summary">
+                <h3 style="text-align: center;">✨ Resumo do Pedido ✨</h3>
+                <div id="itens-pedido"></div>
+                <div id="extras-pedido"></div>
+                <div id="taxa-entrega"></div>
+                <div id="observacao-pedido"></div>
+                <div id="troco-pedido"></div>
+                <div class="total-destaque">Total: R$ <span id="total-pedido">0,00</span></div>
+            </div>
+            <button onclick="sendToWhatsApp()" class="btn-principal">Ok, Enviar Pedido!</button>
+            <button class="btn-fechar" onclick="cancelRequest()">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="popup-permissao-localizacao" class="popup-overlay">
+        <div class="popup-content">
+            <p>📍 Precisamos da sua localização para calcular a taxa de entrega.</p>
+            <button onclick="aceitarLocalizacao()" class="btn-principal">Permitir Localização</button>
+            <button onclick="inserirEnderecoManual()" class="btn-fechar">Inserir Endereço Manualmente</button>
+        </div>
+    </div>
+
+    <div id="fundo-escuro"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
