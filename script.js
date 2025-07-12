@@ -398,6 +398,23 @@ function resetOrder() {
 
 
 // Funções de localização (mantidas, mas considere o aviso sobre API Key)
+
+// --- IMPORTANTE: ADICIONADA/AJUSTADA ESTA FUNÇÃO initMap ---
+// Esta função é o callback da API do Google Maps.
+// Ela é chamada automaticamente quando a API do Google Maps é carregada.
+// É CRUCIAL que ela NÃO contenha lógica para abrir pop-ups de pedido.
+function initMap() {
+    console.log("Google Maps API carregado. Função initMap executada.");
+    // Adicione aqui qualquer lógica de inicialização de mapa REAL, se necessário.
+    // Ex: const map = new google.maps.Map(document.getElementById('map'), { center: { lat: -34.397, lng: 150.644 }, zoom: 8 });
+
+    // A lógica para pedir a localização do usuário ao carregar a página
+    // É tratada no DOMContentLoaded, *não* diretamente aqui.
+    // NENHUM POP-UP DEVE SER ABERTO NESTA FUNÇÃO initMap.
+}
+// --- FIM DA FUNÇÃO initMap ADICIONADA/AJUSTADA ---
+
+
 function aceitarLocalizacao() {
     localStorage.setItem("localizacaoPermitida", "true");
     togglePopup('popup-permissao-localizacao', false); // Fecha o popup
@@ -407,7 +424,7 @@ function aceitarLocalizacao() {
 function inserirEnderecoManual() {
     localStorage.setItem("localizacaoPermitida", "false"); // Marca como não permitido para não pedir de novo
     togglePopup('popup-permissao-localizacao', false); // Fecha o popup
-    // Não chama askAddress() aqui, pois o objetivo é iniciar no menu
+    // Não chama askAddress() aqui, o usuário deve navegar até o carrinho e confirmar para abrir o endereço.
 }
 
 function obterLocalizacao() {
@@ -660,19 +677,23 @@ document.addEventListener("DOMContentLoaded", function () {
     atualizarContadorCarrinho();
 
     // 4. Verifica e gerencia o pop-up de permissão de localização
-    // Mantenha o popup-permissao-localizacao com display: none no CSS para começar oculto.
+    // IMPORTANTE: O popup-permissao-localizacao DEVE ESTAR COM display: none no CSS para começar oculto.
+    // Ele será exibido APENAS SE NECESSÁRIO AQUI.
     const localizacaoPermitida = localStorage.getItem("localizacaoPermitida");
 
-    if (localizacaoPermitida === "true") {
-        console.log("✅ Localização já permitida.");
-        obterLocalizacao(); // Tenta obter a localização para calcular a taxa
-    } else if (localizacaoPermitida === "false") {
-        console.log("❌ Localização negada/não suportada anteriormente.");
-        // Não mostra o popup, o usuário pode ir para o formulário de endereço manual se quiser.
-    } else {
+    // Se a permissão não foi dada nem negada explicitamente antes, mostre o popup.
+    if (localizacaoPermitida === null) {
         console.log("❓ Pedindo permissão de localização pela primeira vez.");
         togglePopup('popup-permissao-localizacao', true); // Mostra o pop-up de permissão
+    } else if (localizacaoPermitida === "true") {
+        console.log("✅ Localização já permitida.");
+        obterLocalizacao(); // Tenta obter a localização para calcular a taxa
+    } else { // localizacaoPermitida === "false"
+        console.log("❌ Localização negada/não suportada anteriormente. Não mostrar pop-up.");
+        // O usuário já negou ou o navegador não suporta, então não mostra o popup de novo.
+        // Ele precisará inserir o endereço manualmente no fluxo de pedido.
     }
+
 
     // 5. Listener para o campo de pagamento
     document.getElementById("forma-pagamento").addEventListener("change", function () {
